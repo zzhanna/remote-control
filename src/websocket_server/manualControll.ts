@@ -7,30 +7,29 @@ export const manualControll = (ws: WebSocket): void => {
     decodeStrings: false,
   });
 
-  duplex.on("data", async (chunck: Buffer) => {
+  duplex.on("data", async (chunck: string) => {
     try {
-      const incommingArgs = String(chunck).split(" ");
-      const [command, positionX, positionY] = incommingArgs;
+      const incommingArgs = chunck.split(" ");
+      const [command, offset] = incommingArgs;
       if (command === "mouse_up") {
-        await mouse.move(up(Number(positionX)));
-        duplex.write(`${command}_${positionX}`);
+        await mouse.move(up(Number(offset)));
+        duplex.write(`${command}\u00A0${offset}`);
       }
       if (command === "mouse_down") {
-        await mouse.move(down(Number(positionX)));
-        duplex.write(`${command}_${positionX}`);
+        await mouse.move(down(Number(offset)));
+        duplex.write(`${command}\u00A0${offset}`);
       }
       if (command === "mouse_left") {
-        await mouse.move(left(Number(positionX)));
-        duplex.write(`${command}_${positionX}`);
+        await mouse.move(left(Number(offset)));
+        duplex.write(`${command}\u00A0${offset}`);
       }
       if (command === "mouse_right") {
-        await mouse.move(right(Number(positionX)));
-        duplex.write(`${command}_${positionX}`);
+        await mouse.move(right(Number(offset)));
+        duplex.write(`${command}\u00A0${offset}`);
       }
       if (command === "mouse_position") {
         const { x, y } = await mouse.getPosition();
-        duplex.write(`${command}_${x},${y}`);
-        // console.log(`${command}_${x},${y}`);
+        duplex.write(`mouse_position\u00A0${x},${y}`);
       }
     } catch (err) {
       console.log(err);
