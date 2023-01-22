@@ -13,5 +13,6 @@ export const startWebSocket = () => {
 
   wsServer.on("close", () => {
     console.log("WebSocket server closed");
+    wsServer.close();
   });
 };
