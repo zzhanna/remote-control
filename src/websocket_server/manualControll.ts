@@ -1,6 +1,6 @@
 import WebSocket, { createWebSocketStream } from "ws";
 import { mouse, left, right, up, down } from "@nut-tree/nut-js";
-import { drawCircle, drawRectangle, drawSquare } from "./helpers";
+import { drawCircle, drawRectangle, drawSquare, screenShot } from "./helpers";
 
 export const manualControll = (ws: WebSocket): void => {
   const duplex = createWebSocketStream(ws, {
@@ -38,7 +38,6 @@ export const manualControll = (ws: WebSocket): void => {
           const { x, y } = await mouse.getPosition();
           duplex.write(`mouse_position\u00A0${x},${y}`);
           console.log(`${command} ${x}, ${y}`);
-
           break;
         case "draw_square":
           await drawSquare(Number(offset1));
@@ -55,6 +54,13 @@ export const manualControll = (ws: WebSocket): void => {
           duplex.write(`draw_circle\u00A0${offset1}`);
           console.log(`${command} ${offset1}`);
           break;
+        case "prnt_scrn":
+          const screenImage = await screenShot();
+          duplex.write(`prnt_scrn ${screenImage}`);
+          console.log(`${command} `);
+          break;
+        default:
+          console.log(`Command ${command} not found`);
       }
     } catch (err) {
       console.log(err);

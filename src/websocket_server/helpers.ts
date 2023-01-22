@@ -7,7 +7,10 @@ import {
   right,
   straightTo,
   up,
+  Region,
+  screen,
 } from "@nut-tree/nut-js";
+import Jimp from "jimp";
 
 export const drawSquare = async (offset: number): Promise<void> => {
   await mouse.pressButton(Button.LEFT);
@@ -43,4 +46,39 @@ export const drawCircle = async (radius: number): Promise<void> => {
     await mouse.move(straightTo(point));
   }
   await mouse.releaseButton(Button.LEFT);
+};
+
+export const screenShot = async () => {
+  const mousePosition = await mouse.getPosition();
+  const widthScreenShot = 200;
+  const heightScreenShot = 200;
+  try {
+    const region = new Region(
+      mousePosition.x - widthScreenShot / 2,
+      mousePosition.y - heightScreenShot / 2,
+      widthScreenShot,
+      heightScreenShot
+    );
+    const screenshot = await (await screen.grabRegion(region)).toRGB();
+
+    const imageJimp = new Jimp(
+      {
+        data: screenshot.data,
+        width: screenshot.width,
+        height: screenshot.height,
+      },
+      (err, screenshot) => {
+        if (err) throw err;
+        return screenshot;
+      }
+    );
+    const bufferScreenShot = (
+      await imageJimp.getBufferAsync(Jimp.MIME_PNG)
+    ).toString("base64");
+    return bufferScreenShot;
+  } catch (err) {
+    console.error(
+      "ERROR! The cursor is based outside the application screen, move the cursor on another position"
+    );
+  }
 };
