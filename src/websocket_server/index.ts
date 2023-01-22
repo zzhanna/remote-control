@@ -1,11 +1,11 @@
 import "dotenv/config";
 import { WebSocketServer } from "ws";
-import "dotenv/config";
 import { manualControll } from "./manualControll";
 
-export const startWebSocket = () => {
-  const WS_PORT: number = Number(process.env.WS_PORT) || 8080;
 
+const WS_PORT: number = Number(process.env.WS_PORT) || 8080;
+
+export const startWebSocket = () => {
   const wsServer = new WebSocketServer({ port: WS_PORT });
   console.log(`Start WebSocket server on the ${WS_PORT} port!`);
 

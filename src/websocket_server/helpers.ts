@@ -48,7 +48,7 @@ export const drawCircle = async (radius: number): Promise<void> => {
   await mouse.releaseButton(Button.LEFT);
 };
 
-export const screenShot = async () => {
+export const screenShot = async (): Promise<string | undefined> => {
   const mousePosition = await mouse.getPosition();
   const widthScreenShot = 200;
   const heightScreenShot = 200;
