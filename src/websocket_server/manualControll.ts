@@ -1,6 +1,18 @@
 import WebSocket, { createWebSocketStream } from "ws";
-import { mouse, left, right, up, down } from "@nut-tree/nut-js";
-import { drawCircle, drawRectangle, drawSquare, screenShot } from "./helpers";
+import { mouse } from "@nut-tree/nut-js";
+import {
+  drawCircle,
+  drawRectangle,
+  drawSquare,
+} from "./helpersControll/drawShape";
+import { screenShot } from "./helpersControll/screenShot";
+import {
+  duplexWriteAndMessage,
+  mouseDown,
+  mouseLeft,
+  mouseRight,
+  mouseUp,
+} from "./helpersControll/mouseCommand";
 
 export const manualControll = (ws: WebSocket): void => {
   const duplex = createWebSocketStream(ws, {
@@ -15,49 +27,37 @@ export const manualControll = (ws: WebSocket): void => {
       const [command, offset1, offset2] = incommingArgs;
       switch (command) {
         case "mouse_up":
-          await mouse.move(up(Number(offset1)));
-          duplex.write(`${command}\u00A0${offset1}`);
-          console.log(`${command} ${offset1}`);
+          mouseUp(command, Number(offset1), duplex);
           break;
         case "mouse_down":
-          await mouse.move(down(Number(offset1)));
-          duplex.write(`${command}\u00A0${offset1}`);
-          console.log(`${command} ${offset1}`);
+          mouseDown(command, Number(offset1), duplex);
           break;
         case "mouse_left":
-          await mouse.move(left(Number(offset1)));
-          duplex.write(`${command}\u00A0${offset1}`);
-          console.log(`${command} ${offset1}`);
+          mouseLeft(command, Number(offset1), duplex);
           break;
         case "mouse_right":
-          await mouse.move(right(Number(offset1)));
-          duplex.write(`${command}\u00A0${offset1}`);
-          console.log(`${command} ${offset1}`);
+          mouseRight(command, Number(offset1), duplex);
           break;
         case "mouse_position":
           const { x, y } = await mouse.getPosition();
-          duplex.write(`mouse_position\u00A0${x},${y}`);
-          console.log(`${command} ${x}, ${y}`);
+          duplexWriteAndMessage(duplex, command, x, y);
           break;
         case "draw_square":
-          await drawSquare(Number(offset1));
-          duplex.write(`draw_squares\u00A0${offset1}`);
-          console.log(`${command} ${offset1}`);
+          await drawSquare(duplex, command, Number(offset1));
           break;
         case "draw_rectangle":
-          await drawRectangle(Number(offset1), Number(offset2));
-          duplex.write(`draw_rectangle\u00A0${offset1},${offset2}`);
-          console.log(`${command} ${offset1}, ${offset2}`);
+          await drawRectangle(
+            duplex,
+            command,
+            Number(offset1),
+            Number(offset2)
+          );
           break;
         case "draw_circle":
-          await drawCircle(Number(offset1));
-          duplex.write(`draw_circle\u00A0${offset1}`);
-          console.log(`${command} ${offset1}`);
+          await drawCircle(duplex, command, Number(offset1));
           break;
         case "prnt_scrn":
-          const screenImage = await screenShot();
-          duplex.write(`prnt_scrn ${screenImage}`);
-          console.log(`${command} `);
+          await screenShot(duplex, command);
           break;
         default:
           console.log(`Command ${command} not found`);
