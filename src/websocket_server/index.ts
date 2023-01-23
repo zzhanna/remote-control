@@ -3,7 +3,7 @@ import { WebSocketServer } from "ws";
 import { manualControll } from "./manualControll";
 import { httpServer } from "../http_server";
 
-const WS_PORT: number = Number(process.env.WS_PORT) || 8181;
+const WS_PORT: number = Number(process.env.WS_PORT) || 8080;
 
 const ws = new WebSocketServer({ port: WS_PORT });
 export const startWebSocket = () => {
